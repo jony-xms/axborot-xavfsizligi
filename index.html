@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axborot Xavfsizligi Testi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--s1:#0f1420;--s2:#161d2e;--s3:#1e2840;--border:rgba(255,255,255,0.07);--accent:#6366f1;--accent2:#8b5cf6;--green:#10b981;--red:#f43f5e;--yellow:#f59e0b;--cyan:#06b6d4;--text:#f0f4ff;--muted:#94a3b8;--muted2:#64748b;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(99,102,241,0.12),transparent);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:20px 16px 80px}
+.hdr{text-align:center;padding:28px 0 20px}
+.hdr-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);border-radius:20px;padding:5px 14px;margin-bottom:14px}
+.hdr h1{font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,36px);font-weight:800;background:linear-gradient(135deg,#f0f4ff 20%,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.hdr p{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:4px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:14px}
+.tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;color:var(--muted);transition:all .2s;font-family:'Syne',sans-serif;position:relative}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.35)}
+.tab-badge{position:absolute;top:-6px;right:-4px;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:18px;text-align:center;display:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.stat-n{font-family:'Syne',sans-serif;font-size:24px;font-weight:700}
+.stat-l{font-size:11px;color:var(--muted2);margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.c-blue{color:#818cf8}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-yellow{color:var(--yellow)}
+.prog-wrap{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-lbl{font-size:12px;color:var(--muted)}
+.prog-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent)}
+.prog-bar{background:rgba(255,255,255,.05);border-radius:6px;height:5px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.mavzu-wrap{margin-bottom:12px}
+.mavzu-lbl{font-size:11px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.mavzu-btns{display:flex;gap:8px;flex-wrap:wrap}
+.mavzu-btn{padding:7px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;background:var(--s1);color:var(--muted);transition:all .2s;font-family:'Syne',sans-serif;position:relative}
+.mavzu-btn:hover{border-color:var(--accent);color:var(--accent)}
+.mavzu-btn.active{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff}
+.m-badge{position:absolute;top:-5px;right:-5px;background:var(--green);color:#fff;font-size:9px;font-weight:700;border-radius:6px;padding:1px 4px}
+.qnav-wrap{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.qnav-lbl{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600}
+.qnav-dots{display:flex;flex-wrap:wrap;gap:5px}
+.qnav-dot{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.04);color:var(--muted2);border:1px solid transparent;flex-shrink:0}
+.qnav-dot:hover{border-color:var(--accent);color:var(--accent)}
+.qnav-dot.done-ok{background:rgba(16,185,129,.18)!important;color:var(--green)!important;border-color:rgba(16,185,129,.35)!important}
+.qnav-dot.done-no{background:rgba(244,63,94,.18)!important;color:var(--red)!important;border-color:rgba(244,63,94,.35)!important}
+.qnav-dot.current{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;transform:scale(1.12)}
+.cd-wrap{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.cd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cd-lbl{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.cd-time{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--cyan);transition:color .3s}
+.cd-time.warn{color:var(--yellow)}
+.cd-time.danger{color:var(--red);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.cd-bar{height:5px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.cd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .9s linear,background .5s}
+.cd-fill.warn{background:linear-gradient(90deg,var(--yellow),#fb923c)}
+.cd-fill.danger{background:linear-gradient(90deg,var(--red),#fb923c)}
+.streak-wrap{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;min-height:12px}
+.s-dot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.07)}
+.s-dot.ok{background:var(--green)}
+.s-dot.no{background:var(--red)}
+.q-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.q-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.q-topic{font-size:11px;font-weight:600;color:var(--accent);background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);padding:4px 12px;border-radius:8px;letter-spacing:.5px;text-transform:uppercase}
+.q-num{font-family:'Syne',sans-serif;font-size:13px;color:var(--muted2);font-weight:600}
+.q-text{font-size:15px;font-weight:500;color:var(--text);margin-bottom:18px;line-height:1.65;padding:14px 16px;background:var(--s2);border-radius:12px;border-left:3px solid var(--accent)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{padding:12px 15px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px;background:var(--s2);color:var(--muted);text-align:left;transition:all .18s;display:flex;align-items:flex-start;gap:11px;line-height:1.5}
+.opt-ltr{width:27px;height:27px;border-radius:7px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;flex-shrink:0;color:var(--muted2);transition:all .18s;margin-top:1px}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(99,102,241,.08);color:var(--text)}
+.opt:hover:not(:disabled) .opt-ltr{background:var(--accent);color:#fff}
+.opt.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:var(--green)}
+.opt.correct .opt-ltr{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:rgba(244,63,94,.1);color:#fca5a5}
+.opt.wrong .opt-ltr{background:var(--red);color:#fff}
+.opt.readonly-ok{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.07);color:var(--green);cursor:default}
+.opt.readonly-ok .opt-ltr{background:rgba(16,185,129,.4);color:#fff}
+.opt.readonly-no{border-color:rgba(244,63,94,.4);background:rgba(244,63,94,.07);color:#fca5a5;cursor:default}
+.opt.readonly-no .opt-ltr{background:rgba(244,63,94,.35);color:#fff}
+.opt:disabled{cursor:default}
+.fb{margin-top:13px;padding:11px 15px;border-radius:12px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px;animation:slideUp .25s ease}
+.fb.show{display:flex}
+.fb.ok{background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.fb.no{background:rgba(244,63,94,.1);color:#fca5a5;border:1px solid rgba(244,63,94,.2)}
+.fb.viewed{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid rgba(100,116,139,.2)}
+.q-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;flex-wrap:wrap}
+.flag-btn{padding:7px 13px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:12px;color:var(--muted2);transition:all .2s;display:flex;align-items:center;gap:5px}
+.flag-btn:hover{border-color:var(--yellow);color:var(--yellow)}
+.flag-btn.flagged{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--yellow)}
+.next-btn{padding:10px 26px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;transition:opacity .2s;display:none}
+.next-btn:hover{opacity:.88}
+.continue-btn{padding:10px 22px;background:rgba(99,102,241,.15);color:var(--accent);border:1px solid rgba(99,102,241,.3);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;display:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal{background:var(--s1);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;max-width:420px;width:92%;animation:slideUp .3s ease;text-align:center}
+.modal h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin-bottom:6px}
+.modal p{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.65}
+.time-options{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.time-opt{padding:13px 18px;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;background:var(--s2);color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:space-between;font-family:'Syne',sans-serif}
+.time-opt:hover{border-color:var(--accent);color:var(--text);background:rgba(99,102,241,.1)}
+.time-opt .td{font-size:12px;color:var(--muted2);font-weight:400;font-family:'DM Sans',sans-serif}
+.custom-row{display:flex;gap:8px}
+.custom-row input{flex:1;padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-family:'Syne',sans-serif;font-weight:600;text-align:center;outline:none}
+.custom-row input:focus{border-color:var(--accent)}
+.custom-row button{padding:10px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
+.done-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:32px 24px;text-align:center;animation:slideUp .4s ease}
+.done-ring{width:120px;height:120px;margin:0 auto 18px;position:relative}
+.done-ring svg{transform:rotate(-90deg)}
+.done-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:26px;font-weight:800}
+.done-badge{display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;font-family:'Syne',sans-serif}
+.done-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:5px}
+.done-sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.done-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.btn-sec{padding:10px 18px;border:1px solid var(--border);background:var(--s2);color:var(--text);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Syne',sans-serif;transition:all .2s}
+.btn-sec:hover{border-color:var(--accent);color:var(--accent)}
+.btn-pri{padding:10px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:13px;font-weight:700;font-family:'Syne',sans-serif}
+.btn-pri:hover{opacity:.85}
+.btn-warn{padding:10px 18px;background:rgba(244,63,94,.12);color:var(--red);border:1px solid rgba(244,63,94,.25);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Syne',sans-serif}
+.timeup-card{background:var(--s1);border:1px solid rgba(244,63,94,.3);border-radius:20px;padding:36px 24px;text-align:center;animation:slideUp .4s ease}
+.welcome{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center}
+.welcome-ico{font-size:48px;margin-bottom:14px}
+.welcome-h{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px}
+.welcome-p{color:var(--muted);font-size:14px;line-height:1.7}
+.missed-empty{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center;color:var(--muted)}
+.missed-list{display:flex;flex-direction:column;gap:8px}
+.missed-item{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:13px 15px;display:flex;align-items:flex-start;gap:11px;cursor:pointer;transition:border-color .2s}
+.missed-item:hover{border-color:var(--red)}
+.missed-q{font-size:14px;color:var(--muted);line-height:1.5}
+.missed-meta{font-size:11px;color:var(--muted2);margin-top:3px}
+.missed-actions{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s3);border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:13px;color:var(--text);z-index:999;transition:transform .3s ease;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}.stat-n{font-size:20px}.q-text{font-size:14px}.qnav-dot{width:24px;height:24px;font-size:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-tag">🔐 Axborot Xavfsizligi</div>
+    <h1>Axborot Xavfsizligi Testi</h1>
+    <p>200 savol · 4 mavzu · Vaqt chegarasi · Progress saqlanadi</p>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('test')" id="tab-test">📝 Test</div>
+    <div class="tab" onclick="switchTab('missed')" id="tab-missed">❌ O'tilmaganlar<span class="tab-badge" id="missed-badge">0</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n c-blue" id="sTotal">0</div><div class="stat-l">Jami</div></div>
+    <div class="stat"><div class="stat-n c-green" id="sCorrect">0</div><div class="stat-l">To'g'ri</div></div>
+    <div class="stat"><div class="stat-n c-red" id="sWrong">0</div><div class="stat-l">Noto'g'ri</div></div>
+    <div class="stat"><div class="stat-n c-yellow" id="sPct">—</div><div class="stat-l">Natija</div></div>
+  </div>
+  <div class="cd-wrap" id="cdWrap" style="display:none">
+    <div class="cd-row">
+      <div class="cd-lbl">⏳ Qolgan vaqt</div>
+      <div class="cd-time" id="cdTime">00:00</div>
+    </div>
+    <div class="cd-bar"><div class="cd-fill" id="cdFill" style="width:100%"></div></div>
+  </div>
+  <div class="prog-wrap" id="progWrap" style="display:none">
+    <div class="prog-top">
+      <span class="prog-lbl" id="progLbl">—</span>
+      <span class="prog-pct" id="progPct">0%</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="mavzu-wrap">
+    <div class="mavzu-lbl">Mavzu tanlash</div>
+    <div class="mavzu-btns" id="mavzuBtns"></div>
+  </div>
+  <div class="qnav-wrap" id="qnavWrap" style="display:none">
+    <div class="qnav-lbl">Savollar</div>
+    <div class="qnav-dots" id="qnavDots"></div>
+  </div>
+  <div class="streak-wrap" id="streakWrap"></div>
+  <div id="testArea">
+    <div class="welcome">
+      <div class="welcome-ico">🔐</div>
+      <div class="welcome-h">Mavzu tanlang</div>
+      <div class="welcome-p">Mavzu tanlagach vaqt belgilaysiz.<br>Savol raqamlariga bosib istalgan savolga o'tish mumkin.<br>Allaqachon javob berilgan savollarda faqat natija ko'rsatiladi.</div>
+    </div>
+  </div>
+  <div id="missedArea" style="display:none"></div>
+</div>
+<div class="modal-overlay" id="timeModal" style="display:none" onclick="modalOutside(event)">
+  <div class="modal">
+    <h2>⏱️ Vaqtni tanlang</h2>
+    <p id="timeModalDesc">Vaqt tugasa test yopiladi va boshidan boshlanadi.</p>
+    <div class="time-options">
+      <div class="time-opt" onclick="pickTime(5)"><span>5 daqiqa</span><span class="td">Tez tekshirish</span></div>
+      <div class="time-opt" onclick="pickTime(10)"><span>10 daqiqa</span><span class="td">O'rtacha sur'at</span></div>
+      <div class="time-opt" onclick="pickTime(15)"><span>15 daqiqa</span><span class="td">Yaxshi o'ylash</span></div>
+      <div class="time-opt" onclick="pickTime(20)"><span>20 daqiqa</span><span class="td">Bemalol</span></div>
+      <div class="time-opt" onclick="pickTime(30)"><span>30 daqiqa</span><span class="td">Batafsil yondashuv</span></div>
+    </div>
+    <div class="custom-row">
+      <input type="number" id="customMin" placeholder="Daqiqa" min="1" max="120">
+      <button onclick="pickCustom()">OK</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const MAVZULAR=[
+  {id:1,name:"1-mavzu",full:"Axborot xavfsizligi asoslari (1–50)"},
+  {id:2,name:"2-mavzu",full:"Kriptografiya va shifrlash (51–100)"},
+  {id:3,name:"3-mavzu",full:"Tarmoq xavfsizligi va hujumlar (101–150)"},
+  {id:4,name:"4-mavzu",full:"Standartlar, audit va boshqaruv (151–200)"}
+];
+
+const RAW=[
+// ── MAVZU 1: Axborot xavfsizligi asoslari (1-50) ──
+{id:1,m:1,q:"Axborot xavfsizligi nima?",o:["Axborotni ruxsatsiz kirish, o'zgartirish va yo'q qilishdan himoya qilish jarayoni","Internet tezligini oshirish texnologiyasi","Kompyuter dasturlarini yangilash jarayoni","Tarmoq ulanishini tekshirish usuli"],a:0},
+{id:2,m:1,q:"CIA triada nima?",o:["Maxfiylik, Yaxlitlik va Mavjudlik","Kompyuter, Internet va Axborot","Shifrlash, Autentifikatsiya va Identifikatsiya","Xavfsizlik, Himoya va Nazorat"],a:0},
+{id:3,m:1,q:"Maxfiylik (Confidentiality) tamoyili nimani anglatadi?",o:["Ma'lumotlarga faqat vakolatli shaxslar kirishi mumkin","Ma'lumotlar doimo mavjud bo'lishi kerak","Ma'lumotlar o'zgartirilmagan bo'lishi kerak","Ma'lumotlar tez uzatilishi kerak"],a:0},
+{id:4,m:1,q:"Yaxlitlik (Integrity) tamoyili nimani anglatadi?",o:["Ma'lumotlar ruxsatsiz o'zgartirilmasligi kerak","Ma'lumotlar tezroq yuborilishi kerak","Ma'lumotlar katta hajmda saqlanishi kerak","Ma'lumotlar shifrlangan bo'lishi kerak"],a:0},
+{id:5,m:1,q:"Mavjudlik (Availability) tamoyili nimani anglatadi?",o:["Ma'lumotlar va tizim vakolatli foydalanuvchilarga doimo mavjud bo'lishi kerak","Ma'lumotlar faqat shifrlangan holda saqlanishi kerak","Ma'lumotlarga faqat administrator kira olishi kerak","Ma'lumotlar muntazam o'chirib yuborilishi kerak"],a:0},
+{id:6,m:1,q:"Tahdid (Threat) nima?",o:["Axborot tizimiga zarar yetkazishi mumkin bo'lgan potensial xavf","Tizimni himoya qiluvchi dastur","Tarmoqni tezlashtiruvchi qurilma","Ma'lumotlarni saqlash usuli"],a:0},
+{id:7,m:1,q:"Zaiflik (Vulnerability) nima?",o:["Tizim yoki dasturda mavjud bo'lgan xato yoki kamchilik","Himoya tizimining kuchli tomoni","Xavfsizlik protokolining nomi","Ma'lumotlarni shifrlash usuli"],a:0},
+{id:8,m:1,q:"Risk nima?",o:["Tahdid amalga oshishi va zarar yetkazishi ehtimoli","Xavfsizlik tizimining turi","Shifrlash algoritmining nomi","Tarmoq protokolining turi"],a:0},
+{id:9,m:1,q:"Axborot aktivi nima?",o:["Tashkilot uchun qimmatga ega bo'lgan axborot resurslari","Kompyuter texnikasi narxi","Internet trafik hajmi","Antivirus dasturining versiyasi"],a:0},
+{id:10,m:1,q:"Phishing hujumi nima?",o:["Foydalanuvchini aldash orqali maxfiy ma'lumotlarni o'g'irlash","Tarmoqni sekinlashtirish hujumi","Fayllarni shifrlash va to'lov talab qilish","Server resurslarini to'ldirib yuborish"],a:0},
+{id:11,m:1,q:"Ransomware nima?",o:["Fayllarni shifrlab, ularni qaytarish evaziga to'lov talab qiluvchi zararli dastur","Reklama ko'rsatuvchi dastur","Tarmoqni kuzatuvchi dastur","Parollarni saqlash dasturi"],a:0},
+{id:12,m:1,q:"Malware nima?",o:["Tizimga zarar yetkazish maqsadida yaratilgan zararli dastur","Tarmoqni himoya qiluvchi dastur","Ma'lumotlarni zaxiralash dasturi","Tizim ishlashini tezlashtiruvchi dastur"],a:0},
+{id:13,m:1,q:"Social engineering nima?",o:["Odamlarni aldash yo'li bilan maxfiy ma'lumotlarga ega bo'lish","Ijtimoiy tarmoqlarni boshqarish","Dasturlash tillarini o'rganish","Tarmoq infratuzilmasini loyihalash"],a:0},
+{id:14,m:1,q:"Brute force hujumi nima?",o:["Barcha mumkin bo'lgan kombinatsiyalarni sinab ko'rib parol topish","Tarmoqni to'ldirib yuborish hujumi","Fayllarni shifrlash hujumi","Elektron pochta orqali aldash hujumi"],a:0},
+{id:15,m:1,q:"Firewall nima?",o:["Tarmoq trafikini nazorat qilib, ruxsatsiz kirishni bloklash vositasi","Ma'lumotlarni shifrlash tizimi","Viruslarni aniqlash dasturi","Parollarni saqlash tizimi"],a:0},
+{id:16,m:1,q:"Antivirus dasturining asosiy vazifasi nima?",o:["Zararli dasturlarni aniqlash, bloklash va o'chirish","Tarmoq tezligini oshirish","Ma'lumotlarni zaxiralash","Parollarni boshqarish"],a:0},
+{id:17,m:1,q:"DDoS hujumi nima?",o:["Ko'plab kompyuterlardan bir vaqtda so'rov yuborib serverni ishlamay qoldirish","Foydalanuvchini aldash hujumi","Fayllarni o'chirish hujumi","Parolni taxmin qilish hujumi"],a:0},
+{id:18,m:1,q:"Insident (Incident) nima?",o:["Axborot xavfsizligi siyosatini buzadigan voqea","Tarmoq ulanishi tezligi","Server saqlash hajmi","Dasturning versiya raqami"],a:0},
+{id:19,m:1,q:"Autentifikatsiya nima?",o:["Foydalanuvchi kimligini tekshirish jarayoni","Ma'lumotlarni shifrlash jarayoni","Tarmoqqa ulanish jarayoni","Fayllarni saqlash jarayoni"],a:0},
+{id:20,m:1,q:"Avtorizatsiya nima?",o:["Tasdiqlangan foydalanuvchiga ma'lum resurslarga kirish huquqini berish","Foydalanuvchi kimligini aniqlash","Tarmoq trafigini filtrlash","Ma'lumotlarni zaxiralash"],a:0},
+{id:21,m:1,q:"Multi-factor autentifikatsiya (MFA) nima?",o:["Ikki yoki undan ko'p usul bilan foydalanuvchi kimligini tasdiqlash","Faqat parol orqali kirish","Tarmoqqa avtomatik ulanish","Biometric ma'lumotlarni saqlash"],a:0},
+{id:22,m:1,q:"Zero Trust modeli nimani anglatadi?",o:["Hech kimga, hatto ichki foydalanuvchilarga ham to'liq ishonmaslik prinsipi","Barcha foydalanuvchilarga to'liq ishonish","Tarmoqqa erkin kirish berish","Parolsiz ishlash usuli"],a:0},
+{id:23,m:1,q:"Least Privilege prinsipi nima?",o:["Foydalanuvchiga faqat vazifasini bajarishi uchun zarur minimal huquq berish","Barcha foydalanuvchilarga administrator huquqi berish","Foydalanuvchilarga ko'proq huquq berish","Huquqlarni vaqti-vaqti bilan oshirib borish"],a:0},
+{id:24,m:1,q:"VPN nima?",o:["Virtual xususiy tarmoq — internet orqali xavfsiz shifrlangan kanal yaratish","Video o'yin platformasi","Virus va pest nazorat nomi","Virtualizatsiya protokoli nomi"],a:0},
+{id:25,m:1,q:"Encryption (Shifrlash) nima?",o:["Ma'lumotlarni maxfiy kalit yordamida o'qib bo'lmaydigan formatga aylantirish","Ma'lumotlarni tezroq uzatish usuli","Ma'lumotlarni kichraytirish usuli","Ma'lumotlarni umumiy kirishga ochish"],a:0},
+{id:26,m:1,q:"Patch management nima?",o:["Dastur va tizimlardagi zaifliklarni bartaraf etish uchun yangilanishlarni boshqarish","Tarmoq kabellarini almashtirish","Kompyuter xotirasini tozalash","Foydalanuvchi parollarini o'zgartirish"],a:0},
+{id:27,m:1,q:"Bulut xavfsizligi nima?",o:["Bulutli hisoblash muhitidagi ma'lumot va resurslarni himoya qilish","Meteorologik bulutlarni kuzatish","Internet tezligini oshirish texnologiyasi","Tarmoq serverlari uchun sovutish tizimi"],a:0},
+{id:28,m:1,q:"Data Loss Prevention (DLP) nima?",o:["Maxfiy ma'lumotlarning tashkilotdan ruxsatsiz chiqib ketishini oldini olish tizimi","Ma'lumotlarni yo'q qilish dasturi","Tarmoq tezligini pasaytirish usuli","Eski ma'lumotlarni arxivlash tizimi"],a:0},
+{id:29,m:1,q:"Honeypot nima?",o:["Hujumchilarni jalb qilib, ularning usullarini o'rganish uchun yaratilgan sun'iy tizim","Tarmoqni himoya qiluvchi apparat","Ma'lumotlarni saqlash tizimi","Foydalanuvchi parollarini o'chirish usuli"],a:0},
+{id:30,m:1,q:"Intrusion Detection System (IDS) nima?",o:["Tarmoq yoki tizimga ruxsatsiz kirishni aniqlash tizimi","Foydalanuvchi parollarini saqlash tizimi","Ma'lumotlarni shifrlash tizimi","Tarmoq tezligini oshirish tizimi"],a:0},
+{id:31,m:1,q:"Penetration testing nima?",o:["Tizim xavfsizligini tekshirish uchun nazorat ostidagi hujum o'tkazish","Kompyuter tizimini tezlashtirish","Tarmoq kabellarini tekshirish","Foydalanuvchi huquqlarini belgilash"],a:0},
+{id:32,m:1,q:"Insider threat nima?",o:["Tashkilot ichidagi shaxs tomonidan kelib chiqadigan xavf","Tashqi hujumchilardan keladigan xavf","Tarmoqdan keladigan xavf","Tabiiy ofatlardan keladigan xavf"],a:0},
+{id:33,m:1,q:"Business Continuity Plan (BCP) nima?",o:["Favqulodda hodisalar vaqtida tashkilot faoliyatini davom ettirish rejasi","Yangi biznes ochish rejasi","Xodimlarni ish o'rganish rejasi","Kompyuter yangilash rejasi"],a:0},
+{id:34,m:1,q:"Disaster Recovery Plan (DRP) nima?",o:["Avariya yoki falokatdan keyin IT tizimlarini tiklash rejasi","Yangi ofis qurishni rejalashtirish","Kompyuterlarni yoqish tartibi","Tarmoq ulanishini tekshirish jarayoni"],a:0},
+{id:35,m:1,q:"Spyware nima?",o:["Foydalanuvchi faoliyatini yashirincha kuzatib, ma'lumotlarni o'g'irlaydigan dastur","Kompyuterni tezlashtiruvchi dastur","Tarmoqni himoya qiluvchi dastur","Fayllarni zaxiralash dasturi"],a:0},
+{id:36,m:1,q:"Trojan horse nima?",o:["Foydali dastur ko'rinishida yashiringan, lekin zarar yetkazuvchi zararli dastur","Tarmoqni tezlashtiruvchi dastur","Xavfsizlik testlash vositasi","Shifrlash dasturi"],a:0},
+{id:37,m:1,q:"Worm (Qurt) nima?",o:["O'z-o'zini ko'paytira oladigan va tarmoq orqali tarqaladigan zararli dastur","Tarmoqni kuzatuvchi dastur","Parollarni saqlash dasturi","Ma'lumotlarni tiklash dasturi"],a:0},
+{id:38,m:1,q:"Rootkit nima?",o:["Tizimda yashirinib, administrator huquqlarini o'g'irlaydigan zararli dastur","Tizimni tezlashtiruvchi dastur","Tarmoq ulanishini boshqaruvchi dastur","Fayllarni kompressiya qiluvchi dastur"],a:0},
+{id:39,m:1,q:"Man-in-the-Middle hujumi nima?",o:["Ikki tomon o'rtasidagi aloqani ushlab, o'qib yoki o'zgartiradigan hujum","Ko'plab kompyuterlardan bir vaqtda hujum","Parolni taxmin qilish hujumi","Elektron pochta orqali aldash hujumi"],a:0},
+{id:40,m:1,q:"SQL Injection nima?",o:["Ma'lumotlar bazasiga zararli SQL kod kiritib, ruxsatsiz ma'lumot olish hujumi","Tarmoq tezligini oshirish usuli","Foydalanuvchi parolini tiklash usuli","Server konfiguratsiyasini o'zgartirish"],a:0},
+{id:41,m:1,q:"XSS (Cross-Site Scripting) nima?",o:["Veb-saytga zararli skript kiritib, boshqa foydalanuvchilarga hujum qilish","Tarmoq trafigini filtrlash usuli","Ma'lumotlarni shifrlash usuli","Tizimni yangilash usuli"],a:0},
+{id:42,m:1,q:"Security policy nima?",o:["Tashkilotning axborot xavfsizligini ta'minlash bo'yicha qoidalar to'plami","Kompyuterlarni sozlash qo'llanmasi","Tarmoq konfiguratsiyasi hujjati","Xodimlar uchun ish tartibi"],a:0},
+{id:43,m:1,q:"Defense in depth nima?",o:["Ko'p qatlamli xavfsizlik yondashuvi — bitta qatlam ishlamasa, keyingisi himoya qiladi","Faqat bitta xavfsizlik vositasidan foydalanish","Tarmoqni to'liq yopib qo'yish","Foydalanuvchi huquqlarini cheklash"],a:0},
+{id:44,m:1,q:"Access Control List (ACL) nima?",o:["Resurslarga kim qanday kirish huquqiga ega ekanligini belgilovchi ro'yxat","Faollik jurnali","Tarmoq qurilmalari ro'yxati","Dastur versiyalari ro'yxati"],a:0},
+{id:45,m:1,q:"Data breach nima?",o:["Maxfiy ma'lumotlarning ruxsatsiz shaxslar tomonidan ko'rilishi yoki o'g'irlanishi","Tarmoq uzilishi","Kompyuter nosozligi","Dastur yangilanishi"],a:0},
+{id:46,m:1,q:"Identity theft nima?",o:["Boshqa shaxsning shaxsiy ma'lumotlarini o'g'irlab, uning nomidan harakat qilish","Kompyuter o'g'irlanishi","Parol unutilishi","Tarmoqqa kirish muammosi"],a:0},
+{id:47,m:1,q:"Biometric autentifikatsiya nima?",o:["Barmoq izi, yuz yoki ko'z nurlari kabi biologik belgilar orqali kimlikni tasdiqlash","Parol orqali kirish","USB kalit orqali kirish","SMS kod orqali kirish"],a:0},
+{id:48,m:1,q:"End-to-end encryption nima?",o:["Ma'lumotlar faqat jo'natuvchi va qabul qiluvchi o'rtasida shifrlangan holda uzatilishi","Ma'lumotlar serverda shifrlangan saqlanishi","Faqat yuborishda shifrlash","Faqat qabul qilishda shifrlash"],a:0},
+{id:49,m:1,q:"Security awareness training nima?",o:["Xodimlarni axborot xavfsizligi tahdidlari va himoya usullariga o'rgatish","Kompyuter ishlatishni o'rgatish","Dasturlashni o'rgatish","Tarmoq sozlashni o'rgatish"],a:0},
+{id:50,m:1,q:"Incident response nima?",o:["Xavfsizlik hodisasiga javob berish va uni hal qilish jarayoni","Tarmoq uzilishini tiklash","Kompyuter nosozligini tuzatish","Yangi xodimlarni ishga olish"],a:0},
+
+// ── MAVZU 2: Kriptografiya va shifrlash (51-100) ──
+{id:51,m:2,q:"Kriptografiya nima?",o:["Ma'lumotlarni maxfiy saqlash va uzatish uchun kodlash fanining sohasi","Tarmoq protokollari to'plami","Kompyuter xotirasini boshqarish usuli","Dasturiy ta'minotni sinovdan o'tkazish"],a:0},
+{id:52,m:2,q:"Simmetrik shifrlash nima?",o:["Shifrlash va deshifrlash uchun bir xil kalit ishlatilishi","Shifrlash uchun ochiq, deshifrlash uchun yopiq kalit","Kalit ishlatilmasdan shifrlash","Har safar yangi kalit yaratish"],a:0},
+{id:53,m:2,q:"Asimmetrik shifrlash nima?",o:["Ochiq va yopiq kalit juftligidan foydalanadigan shifrlash tizimi","Faqat bitta kalit ishlatilishi","Kalitsiz shifrlash","Simmetrik shifrlashning boshqa nomi"],a:0},
+{id:54,m:2,q:"AES (Advanced Encryption Standard) nima?",o:["Keng qo'llaniladigan simmetrik shifrlash standarti","Tarmoq protokoli","Internet brauzer nomi","Ma'lumotlar bazasi turi"],a:0},
+{id:55,m:2,q:"RSA nima?",o:["Ochiq kalitli kriptografiyaning mashhur asimmetrik algoritmi","Tarmoq ulanish protokoli","Antivirus dastur nomi","Operatsion tizim nomi"],a:0},
+{id:56,m:2,q:"Hash funksiya nima?",o:["Istalgan uzunlikdagi ma'lumotni belgilangan uzunlikdagi qiymatga aylantiruvchi funksiya","Shifrlash kalitini yaratish usuli","Ma'lumotlarni kompressiya qilish usuli","Tarmoq manzilini aniqlash usuli"],a:0},
+{id:57,m:2,q:"MD5 nima?",o:["128 bitli xesh qiymat ishlab chiqaradigan kriptografik xesh algoritm","Tarmoq protokoli","Ma'lumotlar bazasi dasturi","Grafik format turi"],a:0},
+{id:58,m:2,q:"SHA-256 nima?",o:["256 bitli xesh qiymat ishlab chiqaradigan keng qo'llaniladigan xesh algoritm","Shifrlash kalit uzunligi","Tarmoq porti raqami","Foydalanuvchi huquqlari darajasi"],a:0},
+{id:59,m:2,q:"Digital signature (Raqamli imzo) nima?",o:["Hujjatning haqiqiyligini va jo'natuvchini tasdiqlash uchun kriptografik usul","Elektron pochta manzili","Foydalanuvchi nomi","Tarmoq manzili"],a:0},
+{id:60,m:2,q:"PKI (Public Key Infrastructure) nima?",o:["Ochiq kalitli kriptografiyani boshqarish uchun sertifikatlar va xizmatlar tizimi","Tarmoq protokollari to'plami","Kompyuter xavfsizlik tizimi","Operatsion tizim komponenti"],a:0},
+{id:61,m:2,q:"SSL/TLS nima?",o:["Internet orqali ma'lumot uzatishda xavfsiz kanal yaratuvchi protokollar","Tarmoq konfiguratsiya protokoli","Ma'lumotlar bazasi ulanish protokoli","Elektron pochta protokoli"],a:0},
+{id:62,m:2,q:"Certificate Authority (CA) nima?",o:["Raqamli sertifikatlar beruvchi ishonchli tashkilot","Tizim administratori lavozimi","Axborot xavfsizligi bo'limi","Tarmoq qurilmasi turi"],a:0},
+{id:63,m:2,q:"Key exchange nima?",o:["Ikkita tomon o'rtasida xavfsiz tarzda shifrlash kalitini almashish jarayoni","Foydalanuvchi huquqlarini berish","Ma'lumotlarni uzatish protokoli","Server konfiguratsiyasi"],a:0},
+{id:64,m:2,q:"Diffie-Hellman protokoli nima?",o:["Xavfsiz bo'lmagan kanal orqali xavfsiz kalit almashish imkonini beruvchi protokol","Tarmoq ulanish protokoli","Ma'lumotlarni shifrlash algoritmi","Autentifikatsiya protokoli"],a:0},
+{id:65,m:2,q:"One-time pad nima?",o:["Har bir xabar uchun bir martalik kalit ishlatuvchi, nazariy jihatdan buzib bo'lmas shifrlash","Bir marta ishlatib bo'ladiganrouter","Bir kunlik xavfsizlik siyosati","Vaqtinchalik parol tizimi"],a:0},
+{id:66,m:2,q:"Block cipher nima?",o:["Ma'lumotlarni belgilangan o'lchamli bloklarga bo'lib shifrlash usuli","Ma'lumotlarni uzluksiz oqim sifatida shifrlash","Kalitsiz shifrlash usuli","Axborotni o'chirish usuli"],a:0},
+{id:67,m:2,q:"Stream cipher nima?",o:["Ma'lumotlarni bit yoki bayt bilan uzluksiz oqim sifatida shifrlash","Ma'lumotlarni bloklarga bo'lib shifrlash","Faqat matnli ma'lumotlarni shifrlash","Rasm fayllarini shifrlash"],a:0},
+{id:68,m:2,q:"Salt (Tuz) kriptografiyada nima?",o:["Xesh buzishga qarshi himoya sifatida parolga qo'shiladigan tasodifiy qiymat","Shifrlash kalitining bir qismi","Raqamli imzoning komponenti","Sertifikat seriya raqami"],a:0},
+{id:69,m:2,q:"Rainbow table hujumi nima?",o:["Oldindan hisoblangan xesh qiymatlar yordamida parollarni topish hujumi","Tarmoqni to'ldirish hujumi","Foydalanuvchini aldash hujumi","Server resurslarini sarflash hujumi"],a:0},
+{id:70,m:2,q:"Steganography nima?",o:["Ma'lumotlarni boshqa ko'rinadigan ma'lumotlar (rasm, audio) ichiga yashirish","Ma'lumotlarni shifrlash","Tarmoq trafikini yashirish","Parollarni saqlash usuli"],a:0},
+{id:71,m:2,q:"Cryptanalysis nima?",o:["Shifrlash algoritmlarining zaifliklarini topish va ularni buzish fanining sohasi","Yangi shifrlash algoritmlari yaratish","Kriptografiyani o'qitish","Xavfsizlik sertifikatlarini berish"],a:0},
+{id:72,m:2,q:"Key length (Kalit uzunligi) xavfsizlikda nimani belgilaydi?",o:["Uzunroq kalit hujumchiga ko'proq kombinatsiyani sinab ko'rishni talab qilib xavfsizlikni oshiradi","Kalitni xotirada saqlash hajmini","Shifrlash tezligini","Tarmoq trafik hajmini"],a:0},
+{id:73,m:2,q:"HTTPS nima?",o:["SSL/TLS protokoli yordamida himoyalangan HTTP protokoli","Oddiy HTTP protokoli","FTP protokolining xavfsiz versiyasi","Tarmoq ulanish protokoli"],a:0},
+{id:74,m:2,q:"IPsec nima?",o:["IP darajasida xavfsiz aloqa ta'minlovchi protokollar to'plami","Internetda parol xavfsizligi","IP manzillarni tekshirish protokoli","Internet protokollarini saqlash"],a:0},
+{id:75,m:2,q:"3DES nima?",o:["DES algoritmini uch marta qo'llash orqali xavfsizlikni oshirgan shifrlash algoritmi","Uchta turli shifrlash tizimining nomi","Uch darajali autentifikatsiya","Uchinchi avlod shifrlash standarti"],a:0},
+{id:76,m:2,q:"Elliptic Curve Cryptography (ECC) nima?",o:["Eliptik egri chiziqlar asosida ishlaydigan kuchli va samarali kriptografiya turi","Matematik grafik shifrlash","3D model asosida shifrlash","Tasodifiy raqamlar generatori"],a:0},
+{id:77,m:2,q:"Forward secrecy nima?",o:["Bitta seans kaliti ochilsa ham boshqa seanslar xavfsiz qolishini ta'minlovchi xususiyat","Ma'lumotlarni oldinga yuborish","Keyingi versiyaga o'tish","Kelajakdagi parollarni saqlash"],a:0},
+{id:78,m:2,q:"HMAC nima?",o:["Xabar yaxlitligini va autentifikatsiyasini ta'minlovchi xesh asosidagi xabar autentifikatsiya kodi","Tarmoq ulanish protokoli","Kompyuter xotirasini tekshirish usuli","Antivirus yangilash protokoli"],a:0},
+{id:79,m:2,q:"Quantum cryptography nima?",o:["Kvant mexanikasi prinsiplaridan foydalanib buzib bo'lmas kanal yaratiladigan shifrlash turi","Kvant kompyuterlar uchun dastur","Kelajakdagi shifrlash fanlari","Murakkab matematik shifrlash"],a:0},
+{id:80,m:2,q:"Password hashing nima?",o:["Parolni maxfiy ushlab turish uchun uni qaytarib tiklab bo'lmaydigan xesh qiymatga aylantirish","Parolni shifrlash","Parolni saqlash","Parolni uzatish"],a:0},
+{id:81,m:2,q:"Bcrypt nima?",o:["Parollarni xeshlash uchun mo'ljallangan, sekin va xavfsiz algoritm","Tarmoq shifrlash protokoli","Fayl kompressiya algoritmi","Ma'lumotlar uzatish protokoli"],a:0},
+{id:82,m:2,q:"Nonce kriptografiyada nima?",o:["Har bir seans yoki xabar uchun bir marta ishlatiluvchi tasodifiy raqam","Tarmoq paketi raqami","Server identifikator raqami","Foydalanuvchi ID raqami"],a:0},
+{id:83,m:2,q:"Key management nima?",o:["Shifrlash kalitlarini yaratish, saqlash, tarqatish va yo'q qilishni boshqarish jarayoni","Foydalanuvchi huquqlarini boshqarish","Tarmoq qurilmalarini boshqarish","Kompyuter resurslarini boshqarish"],a:0},
+{id:84,m:2,q:"Certificate revocation nima?",o:["Muddati o'tgan yoki buzilgan raqamli sertifikatni bekor qilish","Yangi sertifikat berish","Sertifikatni yangilash","Sertifikat ma'lumotlarini o'qish"],a:0},
+{id:85,m:2,q:"Tokenization nima?",o:["Maxfiy ma'lumotlarni noyob identifikator (token) bilan almashtirish usuli","Tarmoq ulanish jarayoni","Foydalanuvchi autentifikatsiyasi","Ma'lumotlarni shifrlash"],a:0},
+{id:86,m:2,q:"OpenSSL nima?",o:["SSL/TLS protokollarini amalga oshiruvchi ochiq kodli kriptografiya kutubxonasi","Ochiq manbali operatsion tizim","Bepul antivirus dastur","Tarmoq diagnostika vositasi"],a:0},
+{id:87,m:2,q:"PGP (Pretty Good Privacy) nima?",o:["Elektron pochta va fayllarni shifrlash va raqamli imzolash uchun ishlatiladigan dastur","Parollarni boshqarish dasturi","Tarmoq monitoring dasturi","Antivirus dastur"],a:0},
+{id:88,m:2,q:"Cipher text nima?",o:["Shifrlash jarayonida hosil bo'lgan o'qib bo'lmaydigan matn","Ochiq matn (original ma'lumot)","Parol maydoni","Xesh qiymat"],a:0},
+{id:89,m:2,q:"Plain text nima?",o:["Shifrlash amalga oshirilgunga qadar original holida turuvchi o'qiladigan ma'lumot","Shifrlangan matn","Xesh qiymat","Raqamli imzo"],a:0},
+{id:90,m:2,q:"Decryption (Deshifrlash) nima?",o:["Shifrlangan ma'lumotni kalit yordamida qayta o'qiladigan formatga aylantirish","Ma'lumotlarni shifrlash","Xesh qiymat hisoblash","Raqamli imzo tekshirish"],a:0},
+{id:91,m:2,q:"Initialization Vector (IV) nima?",o:["Shifrlashda tasodifiylikni ta'minlash uchun ishlatiladigan qo'shimcha tasodifiy qiymat","Shifrlash kalitining uzunligi","Tarmoq paketining identifikatori","Foydalanuvchi sessiyasi raqami"],a:0},
+{id:92,m:2,q:"CBC (Cipher Block Chaining) rejimi nima?",o:["Har bir blok shifrlanishida oldingi shifrlangan blok natijasi ham ishlatiluvchi rejim","Bloklarni ketma-ket, mustaqil shifrlash rejimi","Oqim asosida shifrlash rejimi","Parallel shifrlash rejimi"],a:0},
+{id:93,m:2,q:"ChaCha20 nima?",o:["Oqim shifrlovchisi bo'lib, AES ga muqobil sifatida ishlatiluvchi algoritm","Yangi blokzanjir protokoli","Tarmoq trafik analizi vositasi","Kriptografik xesh funksiya"],a:0},
+{id:94,m:2,q:"Kerckhoffs tamoyili nima?",o:["Kriptotizim kalit tashqari barcha narsalar oshkor bo'lsa ham xavfsiz bo'lishi kerak","Kalit ham sir saqlanishi kerak","Algoritm sir saqlanishi kerak","Shifrlash hech kimga aytilmasligi kerak"],a:0},
+{id:95,m:2,q:"Entropy kriptografiyada nimani anglatadi?",o:["Ma'lumotning yoki kalitning tasodifiylik darajasi va bashorat qilib bo'lmaslik o'lchovi","Ma'lumot hajmi o'lchovi","Shifrlash tezligi o'lchovi","Kalit uzunligi o'lchovi"],a:0},
+{id:96,m:2,q:"S-box kriptografiyada nima?",o:["Shifrlash algoritmlarida kirish bitlarini chiqish bitlariga almashtiruvchi o'zgartirish jadvali","Xavfsiz saqlash quticha","Shifrlangan fayl kengaytmasi","Server xavfsizlik qurilmasi"],a:0},
+{id:97,m:2,q:"Key derivation function (KDF) nima?",o:["Parol yoki asosiy sirdan kriptografik kalit hosil qiladigan funksiya","Kalit uzunligini qisqartirish funksiyasi","Kalitni oshkor qilish funksiyasi","Kalit ma'lumotlarini o'chirish funksiyasi"],a:0},
+{id:98,m:2,q:"PBKDF2 nima?",o:["Paroldan ishonchli kalit hosil qilish uchun ko'p marta takrorlanadigan xesh funksiyasiga asoslangan KDF","Tarmoq autentifikatsiya protokoli","Fayl kompressiya algoritmi","Raqamli imzo algoritmi"],a:0},
+{id:99,m:2,q:"Substitution cipher nima?",o:["Har bir harf yoki belgi boshqa harf yoki belgi bilan almashtiriladigan klassik shifrlash","Harflar o'rin almashtiriluvchi shifrlash","Bloklarga bo'lib shifrlash","Oqim asosida shifrlash"],a:0},
+{id:100,m:2,q:"Zero-knowledge proof nima?",o:["Bir tomon sir ma'lumotni oshkor qilmasdan uning borligini isbotlay oladigan kriptografik protokol","Parolsiz kirish tizimi","Anonimlik ta'minlovchi protokol","Xavfsiz kanal protokoli"],a:0},
+
+// ── MAVZU 3: Tarmoq xavfsizligi va hujumlar (101-150) ──
+{id:101,m:3,q:"ARP Poisoning hujumi nima?",o:["ARP jadvalini soxta ma'lumotlar bilan to'ldirib tarmoq trafikini o'zgartirish hujumi","Tarmoqni sekinlashtirish hujumi","Serverni o'chirish hujumi","Parolni taxmin qilish hujumi"],a:0},
+{id:102,m:3,q:"DNS Spoofing nima?",o:["DNS so'rovlariga soxta javob berish orqali foydalanuvchini noto'g'ri saytga yo'naltirish","Tarmoq trafigini kuzatish","Kompyuterni restart qilish","Ma'lumotlarni shifrlash"],a:0},
+{id:103,m:3,q:"Botnet nima?",o:["Zararli dastur bilan yuqtirilgan, masofadan boshqariladigan kompyuterlar tarmog'i","Xavfsiz tarmoq tizimi","Qonuniy kompyuter tarmog'i","Ma'lumotlar markazining tuzilishi"],a:0},
+{id:104,m:3,q:"Port scanning nima?",o:["Tarmoqdagi ochiq portlarni va xizmatlarni aniqlash uchun tekshirish","Tarmoq portlarini yopish","Hujum o'tkazish","Ma'lumotlar uzatish usuli"],a:0},
+{id:105,m:3,q:"Sniffer nima?",o:["Tarmoq trafikini tutib, tahlil qiluvchi dastur yoki qurilma","Tarmoqni tezlashtiruvchi qurilma","Viruslarni aniqlash dasturi","Parollarni saqlash vositasi"],a:0},
+{id:106,m:3,q:"Session hijacking nima?",o:["Haqiqiy foydalanuvchining aktiv sessiyasini o'g'irlab uning nomidan harakat qilish","Sessiyani o'chirish","Foydalanuvchini tizimdan chiqarish","Sessiya davomiyligini uzaytirish"],a:0},
+{id:107,m:3,q:"Cross-site Request Forgery (CSRF) nima?",o:["Autentifikatsiyalangan foydalanuvchi nomidan ruxsatsiz harakatlarni bajarish hujumi","Ma'lumotlar bazasiga hujum","Server resurslarini sarflash hujumi","Tarmoq trafikini to'xtatish hujumi"],a:0},
+{id:108,m:3,q:"Buffer overflow nima?",o:["Dasturda belgilangan bufer chegarasidan oshib, tizim xotirasini o'zgartirish hujumi","Tarmoq buferi to'lib ketishi","Xotira kartasini to'ldirish","Faylni buferlash usuli"],a:0},
+{id:109,m:3,q:"Watering hole hujumi nima?",o:["Maqsadli guruh ko'p tashrif buyuradigan saytni yuqtirib, o'sha foydalanuvchilarga hujum qilish","To'g'ridan-to'g'ri tarmoqqa hujum","Elektron pochta orqali hujum","Fizik hujum turi"],a:0},
+{id:110,m:3,q:"Drive-by download nima?",o:["Foydalanuvchi shubhali saytga kirganida avtomatik zararli dastur yuklanishi","Foydalanuvchining ixtiyoriy fayl yuklab olishi","Tarmoqdan fayl ko'chirish","Server backup jarayoni"],a:0},
+{id:111,m:3,q:"NAT (Network Address Translation) nima?",o:["Ichki tarmoq IP manzillarini tashqi manzillarga aylantiruvchi tarmoq texnologiyasi","Tarmoq qurilmalarini autentifikatsiya qilish","Ma'lumotlarni shifrlash protokoli","Tarmoq trafigini filtrlash"],a:0},
+{id:112,m:3,q:"Intrusion Prevention System (IPS) nima?",o:["Hujumlarni aniqlash va avtomatik tarzda bloklash qobiliyatiga ega aktiv mudofaa tizimi","Faqat hujumlarni aniqlovchi passiv tizim","Tarmoq tezligini oshiruvchi tizim","Ma'lumotlarni zaxiralash tizimi"],a:0},
+{id:113,m:3,q:"Network segmentation nima?",o:["Tarmoqni alohida segmentlarga bo'lib, hujum tarqalishini cheklash strategiyasi","Tarmoqni to'liq yopish","Tarmoq tezligini oshirish","Tarmoq qurilmalarini almashtirish"],a:0},
+{id:114,m:3,q:"DMZ (Demilitarized Zone) tarmoqda nima?",o:["Ichki va tashqi tarmoq o'rtasida joylashgan xavfsizlik bufer zonasi","Tarmoqda xavfsiz saqlash hududi","Maxfiy ma'lumotlar segmenti","Administrator tarmoq segmenti"],a:0},
+{id:115,m:3,q:"VLAN nima?",o:["Bir xil fizik tarmoqda mantiqiy jihatdan ajratilgan virtual mahalliy tarmoqlar","Virtual lokal server tarmog'i","Shifrlangan LAN tarmog'i","Simsiz LAN tarmog'i"],a:0},
+{id:116,m:3,q:"Lateral movement nima?",o:["Hujumchi tarmoqqa kirganidan so'ng boshqa tizimlarga o'tib tarqalish jarayoni","Tarmoq qurilmalarini ko'chirish","Foydalanuvchi huquqlarini o'zgartirish","Ma'lumotlarni ko'chirish"],a:0},
+{id:117,m:3,q:"C2 (Command and Control) server nima?",o:["Hujumchi zararlangan kompyuterlarni masofadan boshqarish uchun foydalanadigan server","Tarmoq boshqaruv serveri","Xavfsizlik monitoring serveri","Asosiy kompyuter serveri"],a:0},
+{id:118,m:3,q:"Zero-day vulnerability nima?",o:["Ishlab chiqaruvchi tomonidan hali yamoq chiqarilmagan, yangi topilgan zaiflik","Eski, ma'lum zaiflik","Testlashda topilgan zaiflik","Administrator tomonidan aniqlangan zaiflik"],a:0},
+{id:119,m:3,q:"Exploit nima?",o:["Zaiflikdan foydalanib tizimga ruxsatsiz kirish yoki zarar yetkazish uchun ishlatiladigan kod","Zaifliklarni tuzatuvchi yamoq","Xavfsizlik tekshiruv vositasi","Tarmoq monitoring dasturi"],a:0},
+{id:120,m:3,q:"Privilege escalation nima?",o:["Oddiy foydalanuvchi huquqlaridan administrator huquqlariga ko'tarilish hujumi","Foydalanuvchi huquqlarini kamaytirish","Yangi foydalanuvchi yaratish","Parol o'zgartirish"],a:0},
+{id:121,m:3,q:"Network monitoring nima?",o:["Tarmoq faoliyatini kuzatib, anomaliyalarni aniqlash jarayoni","Tarmoqni o'chirish","Yangi qurilma qo'shish","Tarmoq tezligini o'lchash"],a:0},
+{id:122,m:3,q:"Packet inspection nima?",o:["Tarmoq paketlarining tarkibini tekshirib xavfli trafikni aniqlash","Paketlarni tezroq uzatish","Paketlarni siqish","Paketlarni saqlash"],a:0},
+{id:123,m:3,q:"SSL Stripping hujumi nima?",o:["HTTPS ulanishni HTTP ga pasaytirish orqali trafikni ochiq holda tutib olish hujumi","SSL sertifikatini o'chirish","HTTPS ni o'rnatish","Shifrlashni kuchaytirish"],a:0},
+{id:124,m:3,q:"Tor tarmog'i nima?",o:["Internetda anonimlikni ta'minlash uchun trafikni ko'p tugunlar orqali yo'naltiradigan tarmoq","Tezkor internet tarmog'i","Korporativ xususiy tarmoq","Bulutli hisoblash tarmog'i"],a:0},
+{id:125,m:3,q:"Replay attack nima?",o:["Ilgari to'g'ri bo'lgan tarmoq ma'lumotlarini qayta yuborib, ruxsat olish hujumi","Tarmoq paketlarini kechiktirish hujumi","Ma'lumotlarni o'chirish hujumi","Tarmoqni sekinlashtirish hujumi"],a:0},
+{id:126,m:3,q:"MAC spoofing nima?",o:["Qurilmaning MAC manzilini soxtalab, tarmoq filtrlashini chetlab o'tish","MAC manzilini o'chirish","Yangi qurilma ulash","Tarmoq manzilini yangilash"],a:0},
+{id:127,m:3,q:"IP spoofing nima?",o:["Soxta IP manzildan paketlar yuborib, haqiqiy jo'natuvchini yashirish","IP manzilni yangilash","Tarmoqqa ulash","Manzilni tekshirish"],a:0},
+{id:128,m:3,q:"Wireless security WPA3 nima?",o:["Wi-Fi himoyasining eng zamonaviy va xavfsiz standarti","Eski, zaif Wi-Fi protokoli","Simli tarmoq protokoli","Bluetooth xavfsizlik standarti"],a:0},
+{id:129,m:3,q:"Evil Twin hujumi nima?",o:["Haqiqiy Wi-Fi tarmog'iga o'xshash soxta kirish nuqtasi yaratib foydalanuvchilarni aldash","Ikki kompyuterni ulash","Wi-Fi tezligini oshirish","Tarmoq parolini o'zgartirish"],a:0},
+{id:130,m:3,q:"Rogue Access Point nima?",o:["Administratorning xabari va ruxsatisiz o'rnatilgan soxta simsiz tarmoq nuqtasi","Rasmiy kirish nuqtasi","Tezkor tarmoq nuqtasi","Zaxira kirish nuqtasi"],a:0},
+{id:131,m:3,q:"Network Access Control (NAC) nima?",o:["Tarmoqqa ulanadigan qurilmalarni siyosat talablariga muvofiqligini tekshirib boshqarish tizimi","Tarmoq trafigini ko'paytirishq","Tarmoq qurilmalarini o'chirish","Tarmoq tezligini nazorat qilish"],a:0},
+{id:132,m:3,q:"Log management nima?",o:["Tizim va tarmoq hodisalari jurnallarini yig'ish, saqlash va tahlil qilish","Ma'lumotlarni o'chirish","Eski fayllarni arxivlash","Kompyuterni o'chirish"],a:0},
+{id:133,m:3,q:"SIEM nima?",o:["Xavfsizlik ma'lumotlari va hodisalarni real vaqtda to'playdi va tahlil qiladigan tizim","Tarmoq tezligini oshiruvchi tizim","Ma'lumotlar zaxira tizimi","Antivirus tizim nomi"],a:0},
+{id:134,m:3,q:"Threat intelligence nima?",o:["Mavjud va kelgusidagi kiberxavflar haqida to'plangan ma'lumotlar va tahlillar","Tarmoq tezligi ma'lumotlari","Foydalanuvchi faoliyati statistikasi","Server ishlash ko'rsatkichlari"],a:0},
+{id:135,m:3,q:"Cyber Kill Chain nima?",o:["Kiberxujumning bosqichlarini tavsiflovchi Lockheed Martin tomonidan ishlab chiqilgan model","Tarmoq topologiyasi modeli","Xavfsizlik audit jarayoni","Foydalanuvchi kirish modeli"],a:0},
+{id:136,m:3,q:"APT (Advanced Persistent Threat) nima?",o:["Uzoq muddat yashirinib, maqsadli va uzluksiz kiberxujumlar olib boradigan tahdid aktyori","Bir martalik oddiy hujum","Tasodifiy zararli dastur","Tashqaridan oddiy hujum"],a:0},
+{id:137,m:3,q:"Exfiltration nima?",o:["Hujumchi tomonidan maqsadli tizimdan ma'lumotlarni yashirincha chiqarib olish","Ma'lumotlarni tashkilot ichida uzatish","Zaxira nusxa olish","Ma'lumotlarni o'chirish"],a:0},
+{id:138,m:3,q:"Darkweb nima?",o:["Maxsus dasturlar yordamida kiriladigan, oddiy brauzerlar bilan ko'rinmaydigan internet segmenti","Kechqurun ko'rinadigan veb sahifalar","Qoraytirilib bezatilgan veb sayt","Maxfiy korporativ tarmoq"],a:0},
+{id:139,m:3,q:"Pharming nima?",o:["DNS ni manipulyatsiya qilib, to'g'ri manzildan soxta saytga yo'naltirish","Qishloq xo'jaligi texnologiyasi","Email orqali aldash","Parol o'g'irlash usuli"],a:0},
+{id:140,m:3,q:"Vishing nima?",o:["Ovozli qo'ng'iroq orqali ijtimoiy muhandislik usulida ma'lumot o'g'irlash","Vizual aldash hujumi","Video orqali hujum","Virtual mashina hujumi"],a:0},
+{id:141,m:3,q:"Smishing nima?",o:["SMS orqali phishing hujumi amalga oshirish","Rasm orqali hujum","Elektron pochta hujumi","Tarmoq orqali hujum"],a:0},
+{id:142,m:3,q:"Supply chain attack nima?",o:["Maqsadli tashkilotga zarar yetkazish uchun uning ta'minotchi yoki sherik tashkilotiga hujum","Tovar etkazib berish jarayoni","Zaxira nusxa olish jarayoni","Tarmoq infratuzilma yaxshilash"],a:0},
+{id:143,m:3,q:"Living off the land (LotL) nima?",o:["Hujumchi qo'shimcha zararli dastur o'rnatmasdan tizimning o'z vositalarini ishlatishi","Tabiat resurslarini saqlash","Server resurslarini optimallashtirish","Tizimni standart sozlamalarda ishlatish"],a:0},
+{id:144,m:3,q:"Credential stuffing nima?",o:["Boshqa saytlardan o'g'irlangan foydalanuvchi nomi/parol juftliklarini boshqa xizmatlarda sinab ko'rish","Parollarni o'zgartirish","Yangi hisob yaratish","Parolni unutib qolish"],a:0},
+{id:145,m:3,q:"Fuzzing nima?",o:["Dasturga kutilmagan yoki noto'g'ri ma'lumotlar kiritib zaifliklarni topish usuli","Tasvirni xiralashtirishq","Tarmoq signalini kuchaytirish","Ma'lumotlarni siqish"],a:0},
+{id:146,m:3,q:"IDS va IPS farqi nima?",o:["IDS faqat aniqlaydi va xabar beradi, IPS aniqlaydi va avtomatik bloklaydi","Ikkalasi bir xil","IPS faqat aniqlaydi, IDS bloklaydi","IDS tarmoqda, IPS kompyuterda ishlaydi"],a:0},
+{id:147,m:3,q:"Threat hunting nima?",o:["Tizimlarda yashiringan tahdidlarni proaktiv ravishda qidirish va topish jarayoni","Yangi xavfsizlik vositalarini sotib olish","Kompyuter dasturlarini yangilash","Tarmoq qurilmalarini tekshirish"],a:0},
+{id:148,m:3,q:"OSINT nima?",o:["Ochiq manbalardan (internet, ijtimoiy tarmoqlar) ma'lumot to'plash usuli","Yopiq razvedka agentligi nomi","Xavfsiz shifrlash algoritmi","Tarmoq monitoring tizimi"],a:0},
+{id:149,m:3,q:"Air gap nima?",o:["Tarmoqdan to'liq uzilgan, jismoniy jihatdan ajratilgan maxfiy kompyuter tizimi","Tarmoq uzilishi","Simsiz tarmoq protokoli","Tarmoq qurilmalarini ajratish"],a:0},
+{id:150,m:3,q:"Red team / Blue team nima?",o:["Red team hujumni simlaydi, Blue team himoyani ta'minlaydi — ikkalasi xavfsizlikni mustahkamlash uchun hamkorlik qiladi","Ikki tarmoq bo'limining nomi","Ikkita antivirus dastur","Server va client farqi"],a:0},
+
+// ── MAVZU 4: Standartlar, audit va boshqaruv (151-200) ──
+{id:151,m:4,q:"ISO/IEC 27001 nima?",o:["Axborot xavfsizligini boshqarish tizimi (ISMS) uchun xalqaro standart","Tarmoq protokollari standarti","Dasturiy ta'minot sifati standarti","Kompyuter texnikasi standarti"],a:0},
+{id:152,m:4,q:"ISMS nima?",o:["Axborot xavfsizligini boshqarish tizimi — xavfsizlikni tizimli boshqarish uchun framework","Ma'lumotlar bazasi boshqaruv tizimi","Tarmoq monitorig tizimi","Foydalanuvchi boshqaruv tizimi"],a:0},
+{id:153,m:4,q:"GDPR nima?",o:["Yevropa Ittifoqining shaxsiy ma'lumotlarni himoya qilish bo'yicha umumiy qoidasi","Global disk xavfsizlik rejimi","Grafik dizayn dasturi nomi","Tarmoq protokolining kengaytmasi"],a:0},
+{id:154,m:4,q:"NIST Cybersecurity Framework nima?",o:["AQShning milliy standartlar instituti tomonidan ishlab chiqilgan kiberxavfsizlik framework","Tarmoq qurilmalari uchun standart","Antivirus dastur standarti","Xavfsizlik sertifikati turi"],a:0},
+{id:155,m:4,q:"Risk assessment nima?",o:["Tashkilotdagi xavflarni aniqlash, tahlil qilish va baholash jarayoni","Tarmoq tezligini o'lchash","Foydalanuvchi faoliyatini baholash","Dastur ishlashini tekshirish"],a:0},
+{id:156,m:4,q:"Risk matrix nima?",o:["Xavflarni ehtimollik va ta'sir darajasi bo'yicha tasniflash uchun ishlatiladigan jadval","Ma'lumotlar bazasi jadvali","Tarmoq topologiyasi diagrammasi","Foydalanuvchi ruxsatlari jadvali"],a:0},
+{id:157,m:4,q:"Risk treatment nima?",o:["Aniqlangan xavflar bilan kurashish uchun qabul qilinadigan qarorlar va harakatlar","Xavflarni e'tibordan chetda qoldirish","Tarmoqni o'chirish","Foydalanuvchilarni bloklash"],a:0},
+{id:158,m:4,q:"Risk acceptance nima?",o:["Tashkilot ma'lum xavfni qabul qilishga va u bilan yashashga tayyorligini bildirishi","Xavfdan mutlaqo qochish","Xavfni boshqa tomonga o'tkazish","Xavfni to'liq bartaraf etish"],a:0},
+{id:159,m:4,q:"Risk avoidance nima?",o:["Xavfga olib keladigan faoliyat yoki jarayondan to'liq voz kechish","Xavfni kamaytirish choralari ko'rish","Xavfni boshqaga topshirish","Xavfni qabul qilish"],a:0},
+{id:160,m:4,q:"Risk transfer nima?",o:["Xavf natijalarini sug'urta yoki kontraktlar orqali boshqa tomonga o'tkazish","Xavfni bartaraf qilish","Xavfni qabul qilish","Xavfdan qochish"],a:0},
+{id:161,m:4,q:"Security audit nima?",o:["Tashkilotning xavfsizlik siyosati va nazorat choralarining samaradorligini mustaqil tekshirish","Kompyuter apparatini tekshirish","Tarmoq tezligini o'lchash","Foydalanuvchi parollarini tekshirish"],a:0},
+{id:162,m:4,q:"Compliance nima?",o:["Tashkilotning qonunlar, qoidalar va standartlarga rioya qilishi","Kompyuter ishlash samaradorligi","Tarmoq konfiguratsiyasi holati","Dasturiy ta'minot versiyasi"],a:0},
+{id:163,m:4,q:"SOC (Security Operations Center) nima?",o:["Tashkilotning kiberxavfsizligini 24/7 kuzatib, hodisalarga javob beradigan markaziy bo'lim","Server operatsion markazi","Yumshoq ta'minot o'rnatish markazi","Tarmoq boshqaruv markazi"],a:0},
+{id:164,m:4,q:"SLA (Service Level Agreement) nima?",o:["Xizmat ko'rsatuvchi va mijoz o'rtasidagi xizmat sifati va mavjudligi bo'yicha kelishuv","Dastur litsenziya shartnomasi","Xavfsizlik audit hisoboti","Tarmoq konfiguratsiya hujjati"],a:0},
+{id:165,m:4,q:"Data classification nima?",o:["Ma'lumotlarni maxfiylik darajasi va muhimligiga qarab toifalash (sir, maxfiy, ochiq va hokazo)","Ma'lumotlarni tartib bilan saqlash","Ma'lumotlarni kategoriyalash tizimi nomi","Ma'lumotlar bazasi yaratish"],a:0},
+{id:166,m:4,q:"Chain of custody nima?",o:["Raqamli dalillarning to'plangandan ishlatilguncha bo'lgan barcha ko'rsatilishi va egaliklari zanjiri","Tarmoq ulanish ketma-ketligi","Foydalanuvchi kirish tarixi","Ma'lumot uzatish ketma-ketligi"],a:0},
+{id:167,m:4,q:"Digital forensics nima?",o:["Raqamli qurilmalardan sud uchun dalillarni topish va tahlil qilish sohasi","Ma'lumotlarni shifrlash usuli","Tarmoqni kuzatish usuli","Kompyuterni tuzatish usuli"],a:0},
+{id:168,m:4,q:"COBIT nima?",o:["IT boshqaruv va boshqaruvini yaxshilash uchun framework (Axborot va tegishli texnologiyalar uchun nazorat maqsadlari)","Antivirus dastur nomi","Tarmoq protokoli standarti","Shifrlash algoritmi nomi"],a:0},
+{id:169,m:4,q:"PCI DSS nima?",o:["To'lov kartasi sanoati ma'lumotlari xavfsizligi standarti","Shaxsiy kompyuter interfeysi standarti","Dasturiy ta'minot litsenziya standarti","Tarmoq apparati standarti"],a:0},
+{id:170,m:4,q:"HIPAA nima?",o:["AQShning tibbiy ma'lumotlar maxfiyligini himoya qiluvchi sog'liqni saqlash qonuni","Tarmoq xavfsizligi protokoli","Shifrlash standarti","Kompyuter texnikasi qoidasi"],a:0},
+{id:171,m:4,q:"SOX (Sarbanes-Oxley) nima?",o:["Moliyaviy hisobot va boshqaruvni tartibga soluvchi AQSh qonuni, IT auditini ham qamrab oladi","Xavfsizlik operatsiyalari nomi","Server operatsion tizimi nomi","Kriptografiya standarti"],a:0},
+{id:172,m:4,q:"Vulnerability management nima?",o:["Tizimlar va dasturlardagi zaifliklarni doimiy aniqlash, tasniflash va yamoq o'rnatish jarayoni","Tarmoq qurilmalarini boshqarish","Foydalanuvchi kirish huquqlarini boshqarish","Xodimlarni boshqarish"],a:0},
+{id:173,m:4,q:"Asset inventory nima?",o:["Tashkilotdagi barcha IT aktivlarni (apparatlar, dasturlar, ma'lumotlar) ro'yxatini yuritish","Mahsulot inventarini hisoblash","Xodimlar ro'yxatini saqlash","Moliyaviy hisobot yuritish"],a:0},
+{id:174,m:4,q:"Security baseline nima?",o:["Tashkilot tizimlarining minimal xavfsizlik talablarini belgilovchi standart konfiguratsiya","Tarmoq tezligining minimal darajasi","Minimal kompyuter texnikasi talabi","Minimal internet tezligi"],a:0},
+{id:175,m:4,q:"Gap analysis nima?",o:["Tashkilotning mavjud xavfsizlik holati va maqsadli holat o'rtasidagi farqni aniqlash tahlili","Tarmoq uzilish sabablari tahlili","Foydalanuvchi faoliyati tahlili","Server ishlash samaradorligi tahlili"],a:0},
+{id:176,m:4,q:"Business Impact Analysis (BIA) nima?",o:["Tizim uzilishi yoki falokatning biznes jarayonlariga ta'sirini baholash jarayoni","Yangi biznes ochish tahlili","Tarmoq kengaytirish rejalasi","Xodimlar faoliyatini baholash"],a:0},
+{id:177,m:4,q:"Recovery Time Objective (RTO) nima?",o:["Tizim falokatdan keyin qancha vaqt ichida tiklanishi kerakligi maqsadi","Ma'lumotlar tiklash hajmi maqsadi","Tarmoq tezligi tiklash maqsadi","Foydalanuvchi kirish tiklash vaqti"],a:0},
+{id:178,m:4,q:"Recovery Point Objective (RPO) nima?",o:["Falokatdan so'ng qabul qilinadigan maksimal ma'lumot yo'qotish hajmi (qaysi vaqtdagi nusxa saqlanishi kerak)","Tizim tiklash vaqti maqsadi","Server tiklash mumkin bo'lgan eng eski nuqta","Tarmoq tiklash maqsadi"],a:0},
+{id:179,m:4,q:"Security awareness nima?",o:["Xodimlar va foydalanuvchilarning axborot xavfsizligi xavflari va usullaridan habardorligi","Kompyuter foydalanish bilimlari","Tarmoq konfiguratsiyasini bilish","Dasturlashni bilish"],a:0},
+{id:180,m:4,q:"Responsible disclosure nima?",o:["Xavfsizlik tadqiqotchisi topilgan zaiflikni oshkor qilishdan oldin ishlab chiqaruvchiga xabar berish etikasi","Tashkilot hisobotini oshkor qilish","Yangi xizmatni e'lon qilish","Foydalanuvchilarni ogohlantirish"],a:0},
+{id:181,m:4,q:"Bug bounty nima?",o:["Tadqiqotchilarni zaifliklarni topib bildirganlik uchun moddiy mukofotlaydigan dastur","Xatoliklarni topish raqobati","Xavfsizlik mashg'uloti","Tizim yangilash jarayoni"],a:0},
+{id:182,m:4,q:"CSIRT nima?",o:["Kompyuter xavfsizligi hodisalariga javob berish guruhи — kiberxavfsizlik hodisalarini boshqaradi","Kompyuter xizmati va infratuzilma tizimi","Kompyuter sozlash va ta'mirlash bo'limi","Kompyuter va server infratuzilma tizimi"],a:0},
+{id:183,m:4,q:"CVE nima?",o:["Umumiy zaifliklar va ta'sirlanuvchilar — ma'lum zaifliklar uchun standartlashtirilgan identifikatorlar tizimi","Ko'p qatlamli shifrlash versiyasi","Kompyuter versiyasi va yangilanishi","Kompyuter va virus eliminator"],a:0},
+{id:184,m:4,q:"CVSS nima?",o:["Umumiy zaiflik baholash tizimi — zaifliklarni 0-10 ball oralig'ida jiddiyligi bo'yicha baholaydi","Kompyuter virus skanerlash tizimi","Kriptografik algoritmlar verifikatsiya tizimi","Kompyuter virtual xavfsizlik tizimi"],a:0},
+{id:185,m:4,q:"Threat modeling nima?",o:["Tizimga bo'lishi mumkin bo'lgan tahdidlarni oldindan aniqlash va ulardan himoya rejasini ishlab chiqish","Yangi tahdidlarni yaratish","Tarmoq topologiyasini modellashtirish","Ma'lumotlar bazasi modelini loyihalash"],a:0},
+{id:186,m:4,q:"STRIDE nima?",o:["Tahdidlarni tasniflash uchun ishlatiladigan model: Spoofing, Tampering, Repudiation, Information disclosure, DoS, Elevation of privilege","Olti bosqichli xavfsizlik tekshiruvi","Standart raqamli identifikatsiya algoritmi","Axborot xavfsizligi standarti nomi"],a:0},
+{id:187,m:4,q:"OWASP Top 10 nima?",o:["Veb ilovalarning eng keng tarqalgan 10 ta xavfsizlik zaifliklarining ro'yxati","O'n xil antivirus dastur","O'n xil shifrlash algoritmi","O'n xil tarmoq protokoli"],a:0},
+{id:188,m:4,q:"DevSecOps nima?",o:["Dastur ishlab chiqish jarayonining har bosqichiga xavfsizlikni integratsiya qilish yondashuvi","Rivojlantirish va server operatsiyalari","Ishlab chiquvchilar uchun xavfsiz operatsion tizim","Dasturlash tillarining tasnifi"],a:0},
+{id:189,m:4,q:"Security by design nima?",o:["Tizim va dasturlarni dastlab loyihalash bosqichidanoq xavfsizlikni asosiy talab sifatida ko'rish","Chiroyli xavfsizlik interfeysi yaratish","Xavfsizlik dasturini sotib olish","Tizimni yopiq saqlash"],a:0},
+{id:190,m:4,q:"Third-party risk management nima?",o:["Tashkilot bilan hamkorlik qiluvchi tashqi kompaniyalar va ta'minotchilardan keladigan xavflarni boshqarish","Foydalanuvchilar xavfini boshqarish","Ichki tarmoq xavfini boshqarish","Server xavfini boshqarish"],a:0},
+{id:191,m:4,q:"NDA (Non-Disclosure Agreement) nima?",o:["Maxfiy ma'lumotlarni oshkor qilmaslik bo'yicha huquqiy shartnoma","Tarmoq ma'lumotlari arxivi","Yangi foydalanuvchilarga kirish shartnomasi","Dastur litsenziya shartnomasi"],a:0},
+{id:192,m:4,q:"Information Security Policy nima?",o:["Tashkilotning axborot xavfsizligini boshqarish bo'yicha yuqori darajadagi qoidalar hujjati","Kompyuter foydalanish qo'llanmasi","Tarmoq sozlash yo'riqnomasi","Xodimlar ish tartibi"],a:0},
+{id:193,m:4,q:"Change management xavfsizlikda nima?",o:["Tizimga kiritilgan o'zgarishlarni nazorat qilish, tasdiqlash va hujjatlashtirishq","Tashkilotdagi o'zgarishlarni boshqarish","Xodimlarni lavozim o'zgartirish jarayoni","Kompyuterlarni almashtirish jarayoni"],a:0},
+{id:194,m:4,q:"Segregation of duties nima?",o:["Firibgarlik va xatolarni oldini olish uchun muhim vazifalarni turli shaxslar o'rtasida taqsimlash","Xodimlarni turli bo'limlarga joylashtirish","Tarmoqni segmentlarga bo'lish","Ma'lumotlarni ajratib saqlash"],a:0},
+{id:195,m:4,q:"Physical security nima?",o:["Binolar, serverlar va jihozlarni fizik kirish, o'g'irlik va tabiiy ofatlardan himoya qilish","Virtual muhitni himoya qilish","Tarmoq trafikini himoya qilish","Dasturiy ta'minotni himoya qilish"],a:0},
+{id:196,m:4,q:"Cyber insurance nima?",o:["Tashkilotni kiberxujumlar va ma'lumot buzilishlariga qarshi moliyaviy zarardan sug'urta qilish","Kompyuter texnikasini sug'urta qilish","Internet xizmatlarini sug'urta qilish","Xodimlarni sug'urta qilish"],a:0},
+{id:197,m:4,q:"Tabletop exercise nima?",o:["Tashkilotning kiberxujum yoki falokatga javob qilish qobiliyatini stol atrofida muhokama shaklida tekshirish mashqi","Kompyuter montaj jarayoni","Tarmoq kengaytirish mashqi","Xodimlarni ishga olish mashqi"],a:0},
+{id:198,m:4,q:"MITRE ATT&CK nima?",o:["Real dunyodagi kiberxujumchi taktikalari va texnikalarini tavsiflovchi bilimlar bazasi","Harbiy hujum strategiyasi","Antivirus dastur nomi","Tarmoq protokollar to'plami"],a:0},
+{id:199,m:4,q:"Cyber hygiene nima?",o:["Kiberxavfsizlikni ta'minlash uchun doimiy va muntazam ravishda bajarilishi kerak bo'lgan amaliyotlar","Kompyuterni fizik tozalash","Dasturlarni o'chirish","Tarmoqni o'chirish"],a:0},
+{id:200,m:4,q:"O'zbekiston Respublikasining axborot xavfsizligi sohasidagi asosiy qonuni qaysi?",o:["\"Axborot xavfsizligi\" va \"Axborotlashtirish\" to'g'risidagi qonunlar hamda tegishli farmonlar","Faqat Jinoyat kodeksi","Faqat Fuqarolik kodeksi","Mehnat qonunchilik"],a:0}
+];
+
+const LS='axbsec_v1';
+let S=load();
+let cdInt=null,cdTotal=0,cdLeft=0;
+let pendingMavzu=null,currentTab='test';
+let _pendingOpts=[],_pendingCi=-1,_pendingQid=-1;
+
+function def(){return{activeMavzu:null,curIdx:0,questions:[],correct:0,wrong:0,history:[],missed:[],flagged:[],missedMode:false,dotStatus:{}};}
+function load(){
+  try{
+    const raw=localStorage.getItem(LS);
+    if(!raw)return def();
+    const p=JSON.parse(raw);
+    if(p.dotStatus){Object.keys(p.dotStatus).forEach(k=>{const d=p.dotStatus[k];if(!d||!Array.isArray(d.opts)||!d.opts.length)delete p.dotStatus[k];});}
+    return Object.assign(def(),p);
+  }catch{return def();}
+}
+function save(){localStorage.setItem(LS,JSON.stringify(S));}
+function shuf(a){return[...a].sort(()=>Math.random()-.5);}
+function shuffleOpts(q){const c=q.o[q.a];const s=shuf([...q.o]);return{opts:s,ci:s.indexOf(c)};}
+
+function startCD(min){
+  cdTotal=min*60;cdLeft=cdTotal;clearInterval(cdInt);
+  document.getElementById('cdWrap').style.display='';
+  updateCD();
+  cdInt=setInterval(()=>{if(--cdLeft<=0)timeUp();else updateCD();},1000);
+}
+function stopCD(){clearInterval(cdInt);document.getElementById('cdWrap').style.display='none';}
+function updateCD(){
+  const m=Math.floor(cdLeft/60).toString().padStart(2,'0');
+  const s=(cdLeft%60).toString().padStart(2,'0');
+  const el=document.getElementById('cdTime'),fill=document.getElementById('cdFill');
+  el.textContent=`${m}:${s}`;
+  fill.style.width=(cdTotal>0?cdLeft/cdTotal*100:100)+'%';
+  if(cdLeft<=30){el.className='cd-time danger';fill.className='cd-fill danger';}
+  else if(cdLeft<=60){el.className='cd-time warn';fill.className='cd-fill warn';}
+  else{el.className='cd-time';fill.className='cd-fill';}
+}
+function timeUp(){
+  stopCD();
+  const mv=MAVZULAR.find(x=>x.id===S.activeMavzu)||{full:''};
+  document.getElementById('testArea').innerHTML=`<div class="timeup-card">
+    <div style="font-size:56px;margin-bottom:14px">⏰</div>
+    <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--red);margin-bottom:8px">Vaqt tugadi!</div>
+    <div style="color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.7">${mv.full}<br><br>${S.correct} ta to'g'ri / ${S.curIdx} ta savol ulgurildi.<br>Test boshidan boshlanadi.</div>
+    <div class="done-acts">
+      <button class="btn-warn" onclick="showTimeModal(${S.activeMavzu})">🔄 Qayta boshlash</button>
+      <button class="btn-sec" onclick="switchTab('missed')">❌ O'tilmaganlar</button>
+    </div>
+  </div>`;
+  S.curIdx=0;S.correct=0;S.wrong=0;S.history=[];S.questions=[];S.dotStatus={};
+  save();updateStats();buildQnav();updateProgress();
+}
+
+function showTimeModal(mid){
+  pendingMavzu=mid;
+  const mv=MAVZULAR.find(x=>x.id===mid)||{full:"O'tilmaganlar"};
+  const cnt=mid>0?RAW.filter(q=>q.m===mid).length:S.missed.length;
+  document.getElementById('timeModalDesc').innerHTML=`<strong>${mv.full}</strong><br>${cnt} ta savol. Vaqt tugasa boshidan boshlanadi.`;
+  document.getElementById('timeModal').style.display='flex';
+}
+function modalOutside(e){if(e.target===document.getElementById('timeModal'))document.getElementById('timeModal').style.display='none';}
+function pickTime(min){document.getElementById('timeModal').style.display='none';if(pendingMavzu===-1)initMissed(min);else initMavzu(pendingMavzu,min);}
+function pickCustom(){
+  const v=parseInt(document.getElementById('customMin').value);
+  if(!v||v<1){showToast('❌ Kamida 1 daqiqa');return;}
+  document.getElementById('timeModal').style.display='none';
+  if(pendingMavzu===-1)initMissed(v);else initMavzu(pendingMavzu,v);
+}
+
+function initMavzu(mid,min){
+  stopCD();
+  S.activeMavzu=mid;S.curIdx=0;S.correct=0;S.wrong=0;S.history=[];S.missedMode=false;S.dotStatus={};
+  S.questions=shuf(RAW.filter(q=>q.m===mid)).map(q=>q.id);
+  save();buildMavzuBtns();updateStats();buildQnav();updateProgress();
+  show(['progWrap','qnavWrap']);renderQ();startCD(min);
+}
+function initMissed(min){
+  if(!S.missed.length){showToast("✅ O'tilmaganlar yo'q!");return;}
+  stopCD();
+  S.missedMode=true;S.curIdx=0;S.correct=0;S.wrong=0;S.history=[];S.dotStatus={};
+  S.questions=shuf([...S.missed]);
+  save();buildMavzuBtns();updateStats();buildQnav();updateProgress();
+  show(['progWrap','qnavWrap']);switchTab('test');renderQ();startCD(min);
+}
+function show(ids){ids.forEach(id=>document.getElementById(id).style.display='');}
+
+function updateStats(){
+  const t=S.correct+S.wrong;
+  document.getElementById('sTotal').textContent=t;
+  document.getElementById('sCorrect').textContent=S.correct;
+  document.getElementById('sWrong').textContent=S.wrong;
+  document.getElementById('sPct').textContent=t>0?Math.round(S.correct/t*100)+'%':'—';
+  document.getElementById('streakWrap').innerHTML=S.history.slice(-24).map(h=>`<div class="s-dot ${h.correct?'ok':'no'}"></div>`).join('');
+  const b=document.getElementById('missed-badge');
+  b.textContent=S.missed.length;b.style.display=S.missed.length?'':'none';
+}
+function updateProgress(){
+  if(!S.activeMavzu||!S.questions.length)return;
+  const pct=Math.round(Math.min(S.curIdx,S.questions.length)/S.questions.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=pct+'%';
+  const mv=MAVZULAR.find(x=>x.id===S.activeMavzu);
+  document.getElementById('progLbl').textContent=
+    (S.missedMode?"❌ O'tilmaganlar":(mv?mv.full:''))+
+    ` — ${Math.min(S.curIdx+1,S.questions.length)}/${S.questions.length}`;
+}
+function buildMavzuBtns(){
+  const wrap=document.getElementById('mavzuBtns');wrap.innerHTML='';
+  MAVZULAR.forEach(m=>{
+    const cnt=RAW.filter(q=>q.m===m.id).length;
+    const btn=document.createElement('button');
+    btn.className='mavzu-btn'+(S.activeMavzu===m.id&&!S.missedMode?' active':'');
+    btn.innerHTML=`${m.name}<span class="m-badge">${cnt}</span>`;
+    btn.title=m.full;btn.onclick=()=>{S.missedMode=false;showTimeModal(m.id);};
+    wrap.appendChild(btn);
+  });
+}
+function buildQnav(){
+  const wrap=document.getElementById('qnavDots');wrap.innerHTML='';
+  if(!S.questions.length){document.getElementById('qnavWrap').style.display='none';return;}
+  document.getElementById('qnavWrap').style.display='';
+  S.questions.forEach((qid,idx)=>{
+    const ds=S.dotStatus[qid];
+    const dot=document.createElement('div');
+    let cls='qnav-dot';
+    if(idx===S.curIdx)cls+=' current';
+    else if(ds)cls+=ds.status==='ok'?' done-ok':' done-no';
+    dot.className=cls;dot.textContent=idx+1;
+    dot.title=ds?(ds.status==='ok'?'✅ To\'g\'ri':'❌ Noto\'g\'ri'):'Javob berilmagan';
+    dot.onclick=()=>jumpTo(idx);
+    wrap.appendChild(dot);
+  });
+}
+function jumpTo(idx){
+  if(idx<0||idx>=S.questions.length)return;
+  S.curIdx=idx;save();updateProgress();buildQnav();
+  const qid=S.questions[idx];
+  if(S.dotStatus[qid])renderReadOnly(qid,S.dotStatus[qid]);else renderQ();
+}
+
+function renderQ(){
+  const area=document.getElementById('testArea');
+  if(S.curIdx>=S.questions.length){renderDone(area);stopCD();return;}
+  const qid=S.questions[S.curIdx];
+  const q=RAW.find(x=>x.id===qid);
+  if(!q){S.curIdx++;renderQ();return;}
+  if(S.dotStatus[qid]){renderReadOnly(qid,S.dotStatus[qid]);return;}
+  const{opts,ci}=shuffleOpts(q);
+  _pendingOpts=[...opts];_pendingCi=ci;_pendingQid=qid;
+  const L=['A','B','C','D'];
+  const fl=S.flagged.includes(qid);
+  const mv=S.missedMode?"❌ O'tilmaganlar":(MAVZULAR.find(x=>x.id===S.activeMavzu)||{name:''}).name;
+  area.innerHTML=`<div class="q-card">
+    <div class="q-head">
+      <span class="q-topic">${mv} · #${qid}</span>
+      <span class="q-num">${S.curIdx+1} / ${S.questions.length}</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts">${opts.map((o,i)=>`
+      <button class="opt" onclick="pick(${i})">
+        <span class="opt-ltr">${L[i]}</span>${o}
+      </button>`).join('')}
+    </div>
+    <div class="fb" id="fb"></div>
+    <div class="q-footer">
+      <button class="flag-btn${fl?' flagged':''}" id="flagBtn" onclick="toggleFlag(${qid})">
+        ${fl?'🚩 Belgilangan':'🏳️ Belgilash'}
+      </button>
+      <button class="next-btn" id="nxtBtn" onclick="nextQ()">
+        ${S.curIdx+1<S.questions.length?'Keyingi →':'Natija →'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderReadOnly(qid,ds){
+  const area=document.getElementById('testArea');
+  const q=RAW.find(x=>x.id===qid);
+  const L=['A','B','C','D'];
+  const idx=S.questions.indexOf(qid);
+  const opts=ds.opts||q.o;
+  const mv=S.missedMode?"❌ O'tilmaganlar":(MAVZULAR.find(x=>x.id===S.activeMavzu)||{name:''}).name;
+  const nextU=S.questions.findIndex((id,i)=>i>idx&&!S.dotStatus[id]);
+  area.innerHTML=`<div class="q-card">
+    <div class="q-head">
+      <span class="q-topic">${mv} · #${qid}</span>
+      <span class="q-num">${idx+1} / ${S.questions.length}</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts">${opts.map((o,i)=>{
+      let cls='opt';
+      if(i===ds.correctIdx)cls+=' readonly-ok';
+      else if(i===ds.chosenIdx&&ds.chosenIdx!==ds.correctIdx)cls+=' readonly-no';
+      return`<button class="${cls}" disabled><span class="opt-ltr">${L[i]}</span>${o}</button>`;
+    }).join('')}
+    </div>
+    <div class="fb show ${ds.status==='ok'?'ok':'no'}">
+      <span style="font-size:18px">${ds.status==='ok'?'✅':'❌'}</span>
+      <span>${ds.status==='ok'?"To'g'ri javob bergan edingiz!":`Noto'g'ri. To'g'ri: ${L[ds.correctIdx]}) ${opts[ds.correctIdx]}`}</span>
+    </div>
+    <div class="fb show viewed" style="margin-top:6px">
+      <span style="font-size:16px">👁️</span>
+      <span>Ko'rib chiqish rejimi — allaqachon javoblangan</span>
+    </div>
+    <div class="q-footer">
+      ${idx>0?`<button class="flag-btn" onclick="jumpTo(${idx-1})">← Oldingi</button>`:'<div></div>'}
+      ${nextU>=0
+        ?`<button class="next-btn" style="display:block" onclick="jumpTo(${nextU})">Keyingi javobsiz →</button>`
+        :idx<S.questions.length-1
+          ?`<button class="continue-btn" style="display:block" onclick="jumpTo(${idx+1})">Keyingi →</button>`
+          :`<button class="btn-pri" onclick="finishTest()">Natijani ko'rish →</button>`}
+    </div>
+  </div>`;
+}
+function finishTest(){renderDone(document.getElementById('testArea'));stopCD();}
+
+function pick(i){
+  const ci=_pendingCi,qid=_pendingQid,opts=[..._pendingOpts];
+  const btns=document.querySelectorAll('.opt');
+  if(btns[0].disabled)return;
+  btns.forEach(b=>b.disabled=true);
+  const ok=i===ci;
+  btns[i].classList.add(ok?'correct':'wrong');
+  if(!ok)btns[ci].classList.add('correct');
+  S.dotStatus[qid]={status:ok?'ok':'no',chosenIdx:i,correctIdx:ci,opts};
+  if(ok){S.correct++;S.history.push({id:qid,correct:true});S.missed=S.missed.filter(x=>x!==qid);
+    document.getElementById('fb').className='fb show ok';
+    document.getElementById('fb').innerHTML='<span style="font-size:18px">✅</span><span>To\'g\'ri! Zo\'r!</span>';
+  }else{S.wrong++;S.history.push({id:qid,correct:false});
+    if(!S.missed.includes(qid))S.missed.push(qid);
+    document.getElementById('fb').className='fb show no';
+    document.getElementById('fb').innerHTML=`<span style="font-size:18px">❌</span><span>Noto'g'ri. To'g'ri: <strong>${['A','B','C','D'][ci]}) ${opts[ci]}</strong></span>`;
+  }
+  updateStats();save();buildQnav();
+  document.getElementById('nxtBtn').style.display='block';
+}
+function nextQ(){S.curIdx++;save();updateProgress();buildQnav();renderQ();}
+function toggleFlag(qid){
+  const idx=S.flagged.indexOf(qid);
+  if(idx>=0)S.flagged.splice(idx,1);else S.flagged.push(qid);
+  save();
+  const fl=S.flagged.includes(qid);
+  const btn=document.getElementById('flagBtn');
+  if(btn){btn.className='flag-btn'+(fl?' flagged':'');btn.innerHTML=fl?'🚩 Belgilangan':'🏳️ Belgilash';}
+  showToast(fl?'🚩 Belgilandi':'Belgi olib tashlandi');
+}
+
+function renderDone(area){
+  stopCD();
+  const total=S.questions.length,pct=total>0?Math.round(S.correct/total*100):0;
+  const r=42,c=2*Math.PI*r,d=c*(pct/100);
+  let badge,bc,color;
+  if(pct>=85){badge="A'lo! 🎉";bc="rgba(16,185,129,.15)";color="#10b981";}
+  else if(pct>=70){badge="Yaxshi! 👍";bc="rgba(99,102,241,.15)";color="#818cf8";}
+  else if(pct>=50){badge="O'rtacha 📖";bc="rgba(245,158,11,.15)";color="#f59e0b";}
+  else{badge="Yana mashq kerak 💪";bc="rgba(244,63,94,.15)";color="#f43f5e";}
+  const mc=S.missed.length;
+  area.innerHTML=`<div class="done-card">
+    <div class="done-ring">
+      <svg width="120" height="120" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="8"
+          stroke-dasharray="${d} ${c}" stroke-linecap="round"/>
+      </svg>
+      <div class="done-num" style="color:${color}">${pct}%</div>
+    </div>
+    <div class="done-badge" style="background:${bc};color:${color}">${badge}</div>
+    <div class="done-title">${S.correct} / ${total} to'g'ri</div>
+    <div class="done-sub">${S.missedMode?"O'tilmaganlar rejimi":"Mavzu"} yakunlandi</div>
+    <div class="done-acts">
+      <button class="btn-sec" onclick="showTimeModal(${S.activeMavzu})">🔄 Qayta</button>
+      ${mc>0?`<button class="btn-warn" onclick="showTimeModal(-1)">❌ O'tilmaganlar (${mc})</button>`:''}
+      ${!S.missedMode&&S.activeMavzu<MAVZULAR.length
+        ?`<button class="btn-pri" onclick="showTimeModal(${S.activeMavzu+1})">Keyingi mavzu →</button>`
+        :`<button class="btn-pri" onclick="showTimeModal(1)">Boshidan →</button>`}
+    </div>
+  </div>`;
+}
+
+function renderMissedTab(){
+  const area=document.getElementById('missedArea');
+  if(!S.missed.length){
+    area.innerHTML=`<div class="missed-empty"><div style="font-size:44px;margin-bottom:10px">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:6px">Hammasi to'g'ri!</div>
+      <div>Hozircha noto'g'ri savol yo'q</div></div>`;return;
+  }
+  const qs=S.missed.map(id=>RAW.find(q=>q.id===id)).filter(Boolean);
+  area.innerHTML=`<div class="missed-actions">
+    <button class="btn-pri" onclick="showTimeModal(-1)">▶ Qayta ishlash (${S.missed.length})</button>
+    <button class="btn-sec" onclick="clearMissed()">🗑️ Tozalash</button>
+  </div>
+  <div class="missed-list">${qs.map(q=>`<div class="missed-item">
+    <div style="font-size:20px;flex-shrink:0">❌</div>
+    <div><div class="missed-q">${q.q}</div>
+    <div class="missed-meta">Savol #${q.id} · ${MAVZULAR.find(m=>m.id===q.m)?.name||''}</div></div>
+  </div>`).join('')}</div>`;
+}
+function clearMissed(){S.missed=[];save();updateStats();renderMissedTab();showToast('✅ Tozalandi');}
+
+function switchTab(t){
+  currentTab=t;
+  document.getElementById('tab-test').classList.toggle('active',t==='test');
+  document.getElementById('tab-missed').classList.toggle('active',t==='missed');
+  document.getElementById('testArea').style.display=t==='test'?'':'none';
+  document.getElementById('missedArea').style.display=t==='missed'?'':'none';
+  if(t==='missed')renderMissedTab();
+}
+
+let tT;
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2200);}
+
+buildMavzuBtns();updateStats();
+if(S.activeMavzu&&S.questions.length>0){
+  show(['progWrap','qnavWrap']);updateProgress();buildQnav();
+  if(S.curIdx<S.questions.length){
+    const qid=S.questions[S.curIdx];
+    if(S.dotStatus[qid])renderReadOnly(qid,S.dotStatus[qid]);else renderQ();
+    showToast('📌 Sessiya tiklandi');showTimeModal(S.activeMavzu);
+  }else{renderDone(document.getElementById('testArea'));}
+}
+window.addEventListener('beforeunload',save);
+setInterval(save,15000);
+</script>
+</body>
+</html>
+ENDOFFILE
+echo "Done! Lines: $(wc -l < /mnt/user-data/outputs/index.html)"
